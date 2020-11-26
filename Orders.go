@@ -2,8 +2,9 @@ package Orders
 
 import "./Person"
 
+// Orders Model
 type Orders struct {
-	orderId     int
-	orderNumber int
+	OrderID     int
+	OrderNumber int
 	Person
 }
