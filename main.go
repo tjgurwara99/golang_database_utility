@@ -4,21 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/tjgurwara99/golang_database_utility/models"
 	"os"
 )
-
-// Person
-type Person struct {
-	person_id int
-	name      string
-}
-
-// Orders
-type Orders struct {
-	order_id     int
-	order_number int
-	Person
-}
 
 // OpenDatabase returns database object if successful
 func OpenDatabase(databaseProgram string, username string, password string, hostname string, databaseName string) (*sql.DB, error) {
@@ -44,9 +32,9 @@ func main() {
 	defer res.Close()
 
 	for res.Next() {
-		var order Orders
+		var order models.Orders
 		var person_id int
-		err := res.Scan(&order.order_id, &order.order_number, &person_id)
+		err := res.Scan(&order.OrderID, &order.OrderNumber, &person_id)
 
 		if err != nil {
 			panic(err)
@@ -54,7 +42,7 @@ func main() {
 
 		person_res := db.QueryRow("Select * from person where id = ?", person_id)
 
-		err = person_res.Scan(&order.person_id, &order.name)
+		err = person_res.Scan(&order.PersonID, &order.Name)
 
 		if err != nil {
 			panic(err)

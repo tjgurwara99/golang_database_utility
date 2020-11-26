@@ -1,8 +1,6 @@
-package Orders
+package models
 
-import "./Person"
-
-// Orders Model
+// Orders model
 type Orders struct {
 	OrderID     int
 	OrderNumber int
