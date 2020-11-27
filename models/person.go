@@ -4,5 +4,5 @@ package models
 type Person struct {
 	PersonID int
 	Name     string
-	Order    []Orders
+	Orders   []Orders
 }
