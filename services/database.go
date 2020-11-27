@@ -3,7 +3,7 @@ package services
 import (
 	"database/sql"
 	// "log"
-	//"errors"
+	//	"errors"
 	_ "github.com/go-sql-driver/mysql"
 	//"reflect"
 	//"strings"
@@ -15,9 +15,14 @@ func OpenDatabase(databaseProgram string, username string, password string, host
 	return db, err
 }
 
+type SelectInterface interface {
+	SelectAllQuery() string
+}
+
 // Exec executes a query
-func Exec(db *sql.DB, query interface{ InsertQuery() string }) {
-	db.Exec(query.InsertQuery())
+func Exec(db *sql.DB, query SelectInterface) (*sql.Rows, error) {
+	res, err := db.Query(query.SelectAllQuery())
+	return res, err
 }
 
 //type queryError struct {

@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	db, err := services.OpenDatabase("mysql", os.Getenv("USER"), os.Getenv("PASSWORD"), "127.0.0.1", os.Getenv("DATABASE_NAME"))
+	db, err := services.OpenDatabase("mysql", os.Getenv("DATABASE_USER"), os.Getenv("DATABASE_PASSWORD"), "127.0.0.1", os.Getenv("DATABASE_NAME"))
 
 	if err != nil {
 		panic(err)
@@ -16,7 +16,8 @@ func main() {
 
 	defer db.Close()
 
-	res, err := db.Query("SELECT * FROM orders")
+	var temp models.Order
+	res, err := services.Exec(db, temp)
 
 	if err != nil {
 		panic(err)
@@ -26,14 +27,18 @@ func main() {
 
 	for res.Next() {
 		var order models.Order
-		var personID int
-		err := res.Scan(&order.OrderID, &order.OrderNumber, &personID)
+		person := models.Person{
+			PersonID: 0,
+			Name:     "",
+		}
+		order.Person = &person
+		err := res.Scan(&order.OrderID, &order.OrderNumber, &order.PersonID)
 
 		if err != nil {
 			panic(err)
 		}
 
-		personRes := db.QueryRow("Select * from person where id = ?", personID)
+		personRes := db.QueryRow("Select * from person where id = ?", order.PersonID)
 
 		err = personRes.Scan(&order.PersonID, &order.Name)
 
@@ -41,7 +46,7 @@ func main() {
 			panic(err)
 		}
 
-		fmt.Printf("%v\n", order)
+		fmt.Printf("%v\n", &order)
 	}
 
 }
