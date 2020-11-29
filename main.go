@@ -16,37 +16,15 @@ func main() {
 
 	defer db.Close()
 
-	var temp models.Order
-	res, err := services.Exec(db, temp)
+	orderModel := models.OrderModel{db}
 
+	orders, err := orderModel.SelectAll()
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
-	defer res.Close()
-
-	for res.Next() {
-		var order models.Order
-		person := models.Person{
-			PersonID: 0,
-			Name:     "",
-		}
-		order.Person = &person
-		err := res.Scan(&order.OrderID, &order.OrderNumber, &order.PersonID)
-
-		if err != nil {
-			panic(err)
-		}
-
-		personRes := db.QueryRow("Select * from person where id = ?", order.PersonID)
-
-		err = personRes.Scan(&order.PersonID, &order.Name)
-
-		if err != nil {
-			panic(err)
-		}
-
-		fmt.Printf("%v\n", &order)
+	for _, value := range orders {
+		fmt.Println(value)
 	}
 
 }
