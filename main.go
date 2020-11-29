@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/tjgurwara99/golang_database_utility/config"
 	"github.com/tjgurwara99/golang_database_utility/models"
 	"github.com/tjgurwara99/golang_database_utility/services"
-	"os"
 )
 
 func main() {
-	db, err := services.OpenDatabase("mysql", os.Getenv("DATABASE_USER"), os.Getenv("DATABASE_PASSWORD"), "127.0.0.1", os.Getenv("DATABASE_NAME"))
+	db, err := services.OpenDatabase(config.GetConfs())
 
 	if err != nil {
 		panic(err)
@@ -24,7 +24,7 @@ func main() {
 	}
 
 	for _, value := range orders {
-		fmt.Println(value)
+		fmt.Println(&value)
 	}
 
 }
