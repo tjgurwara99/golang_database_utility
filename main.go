@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/tjgurwara99/golang_database_utility/config"
-	"github.com/tjgurwara99/golang_database_utility/models"
+	"github.com/tjgurwara99/golang_database_utility/model"
 	"github.com/tjgurwara99/golang_database_utility/services"
 )
 
@@ -16,7 +17,7 @@ func main() {
 
 	defer db.Close()
 
-	orderModel := models.OrderModel{db}
+	orderModel := model.OrderModel{db}
 
 	orders, err := orderModel.SelectAll()
 	if err != nil {

@@ -11,7 +11,7 @@ import (
 
 // OpenDatabase returns database object if successful
 func OpenDatabase(databaseProgram string, username string, password string, hostname string, databaseName string) (*sql.DB, error) {
-	db, err := sql.Open(databaseProgram, username+":"+password+"@tcp("+hostname+")/"+databaseName)
+	db, err := sql.Open(databaseProgram, username+":"+password+"@tcp("+hostname+")/"+databaseName+"?parseTime=true")
 	return db, err
 }
 
