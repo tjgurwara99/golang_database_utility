@@ -12,7 +12,7 @@ type UserModel struct {
 }
 
 // GetCompanyUsers active users of a company for UserModel - restrict it to per company
-func (userModel UserModel) GetCompanyUsers(userCompany entity.Company) (*[]entity.User, error) {
+func (userModel *UserModel) GetCompanyUsers(userCompany entity.Company) (*[]entity.User, error) {
 	rows, err := userModel.DB.Query("select first_name, last_name, email from user where (company_id = ?) and (is_active=true) ", userCompany.CompanyID)
 	if err != nil {
 		return nil, err
@@ -104,7 +104,7 @@ func (userModel *UserModel) GetCompanyManager(managerID *int64, company *entity.
 }
 
 //GetUserByUsername Get User by Username
-func (userModel UserModel) GetUserByUsername(username string) (*entity.User, error) {
+func (userModel *UserModel) GetUserByUsername(username string) (*entity.User, error) {
 	rows, err := userModel.DB.Query(
 		`select id, password, first_name, last_name, last_login, is_superuser, username,
 		email, is_staff, is_active, date_joined, company_id, birth_date
@@ -144,13 +144,21 @@ func (userModel UserModel) GetUserByUsername(username string) (*entity.User, err
 }
 
 // Authenticate authentication
-//func (userModel UserModel) Authenticate(username, password string) (*entity.User, error) {
-//	if username == "" {
-//		return nil, entity.ErrUsernamePassword
-//	}
-//	user, err := userModel.GetUserByUsername(username)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//}
+func (userModel UserModel) Authenticate(username, password string) (*entity.User, error) {
+	if username == "" {
+		return nil, entity.ErrUsernamePassword
+	}
+	user, err := userModel.GetUserByUsername(username)
+	if err != nil {
+		return nil, err
+	}
+
+	err = user.ValidatePassword(password)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+
+}
