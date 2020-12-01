@@ -38,7 +38,24 @@ func (companyModel *CompanyModel) CreateCompany(newCompany *entity.Company) (*en
 
 // GetCompanyByID Get Company Entity by ID
 func (companyModel *CompanyModel) GetCompanyByID(companyID *int64) (*entity.Company, error) {
-	rows, err := companyModel.DB.Query("select id, name, active, last_payment from company where id = ?", companyID)
+	rows, err := companyModel.DB.Query("select id, name, is_active, last_payment from company where id = ?", companyID)
+	if err != nil {
+		return nil, err
+	}
+	var company entity.Company
+
+	for rows.Next() {
+		err := rows.Scan(&company.CompanyID, &company.CompanyName, &company.CompanyIsActive, &company.LastPayment)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return &company, nil
+}
+
+// GetCompanyByName Get Company entity by Name
+func (companyModel *CompanyModel) GetCompanyByName(companyName string) (*entity.Company, error) {
+	rows, err := companyModel.DB.Query("select id, name, is_active, last_payment from company where name = ?", companyName)
 	if err != nil {
 		return nil, err
 	}

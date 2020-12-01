@@ -14,11 +14,11 @@ type UserModel struct {
 // CreateUser Create a new user record in the database
 func (userModel *UserModel) CreateUser(newUser *entity.User) (*entity.User, error) {
 	_, err := userModel.DB.Exec(`
-	insert into user (first_name, last_name, last_login, is_superuser, username,
+	insert into user (first_name, last_name, last_login, is_superuser, username, password,
 	email, is_staff, is_active, date_joined, birth_date, is_manager, is_owner, company_id )
-	values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+	values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		newUser.FirstName, newUser.LastName, newUser.LastLogin, newUser.IsSuperuser,
-		newUser.Username, newUser.Email, newUser.IsStaff, newUser.IsActive,
+		newUser.Username, newUser.Password, newUser.Email, newUser.IsStaff, newUser.IsActive,
 		newUser.DateJoined, newUser.BirthDate, newUser.IsManager, newUser.IsOwner, newUser.CompanyID)
 	if err != nil {
 		return nil, err

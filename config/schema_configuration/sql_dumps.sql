@@ -7,8 +7,21 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
-# Dump of table user
-# ------------------------------------------------------------
+# ----------------------------------------------------------
+# `company` TABLE
+
+# DROP TABLE IF EXISTS `company`; # For Complete cleanup
+
+CREATE TABLE IF NOT EXISTS `company` (
+  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` varchar(255) NOT NULL UNIQUE,
+  `is_active` tinyint(1) NOT NULL,
+  `last_payment` datetime(6) DEFAULT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+# -----------------------------------------------------------
+# `user` TABLE
+
 
 # DROP TABLE IF EXISTS `user`; # For Complete cleanup
 
@@ -29,17 +42,10 @@ CREATE TABLE `user` (
   `is_manager` tinyint(1) DEFAULT FALSE,
   `is_owner` tinyint(1) DEFAULT FALSE,
   FOREIGN KEY (`company_id`) REFERENCES `company` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
-# DROP TABLE IF EXISTS `company`; # For Complete cleanup
 
-CREATE TABLE IF NOT EXISTS `company` (
-  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `name` varchar(255) NOT NULL UNIQUE,
-  `is_active` tinyint(1) NOT NULL,
-  `last_payment` datetime(6) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;

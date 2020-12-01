@@ -20,3 +20,6 @@ var ErrInvalidDataInput = errors.New("Invalid inputs")
 
 // ErrPasswordLength Password Too Small
 var ErrPasswordLength = errors.New("Password too small")
+
+// ErrNumericPassword Password contains only numbers
+var ErrNumericPassword = errors.New("Password only contains numbers")

@@ -2,7 +2,6 @@ package entity
 
 import (
 	"fmt"
-	"strconv"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -33,11 +32,11 @@ func (user *User) String() string {
 }
 
 // NewUser Constructor
-func NewUser(Username, password, firstName, lastName, email string,
+func NewUser(username, password, firstName, lastName, email string,
 	IsSuperuser, isStaff, isActive, isManager, isOwner bool,
 	company *Company, birthDate time.Time) (*User, error) {
 	user := &User{
-		Username:    Username,
+		Username:    username,
 		FirstName:   firstName,
 		LastName:    lastName,
 		Email:       email,
@@ -63,9 +62,9 @@ func NewUser(Username, password, firstName, lastName, email string,
 }
 
 // ValidatePasswordMinimumLength Validates that password is at least 8 characters long
-func (user *User) ValidatePasswordMinimumLength(password string) error {
+func ValidatePasswordMinimumLength(password string) error {
 	const minLength = 8
-	if len(user.Password) < minLength {
+	if len(password) < minLength {
 		return ErrPasswordLength
 	}
 	return nil
@@ -73,18 +72,25 @@ func (user *User) ValidatePasswordMinimumLength(password string) error {
 }
 
 // ValidateUsernamePasswordTooSimilar validates whether password is too similar to Username
-func (user *User) ValidateUsernamePasswordTooSimilar(password string) error {
+func ValidateUsernamePasswordTooSimilar(password string) error {
 	// do some sequence matching - not familiar with the difflib library
 	// will get back to it when I have the time
+	// TODO: Read the documentation of difflib and figure out a way to
+	// do sequence matching with different fields of the user.
+	// I may need to add another pointer argument to the User.
 	return nil
 }
 
 // ValidateNumericPassword Returns error if password is just numeric only
-func (user *User) ValidateNumericPassword(password string) error {
-	_, err := strconv.Atoi(password)
-	if err != nil {
-		return err
-	}
+func ValidateNumericPassword(password string) error {
+	//match, err := regexp.MatchString(`^[0-9 ]+$`, password)
+	//if err != nil {
+	//	return err
+	//}
+	//if match {
+	//	return ErrNumericPassword
+	//}
+
 	return nil
 }
 
@@ -109,9 +115,27 @@ func (user *User) CheckPassword(password string) error {
 
 // GeneratePassword Generates the hash string to store in the database
 func GeneratePassword(password string) (string, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), 20) // 20: Not sure how intensive I want the hashing to be - check later
+	// Don't proceed forward if the password is numeric
+	err := ValidateNumericPassword(password)
 	if err != nil {
 		return "", err
 	}
+	// Don't proceed forward if the password is too
+	// similar to the username - NOT WORKING RIGHT NOW
+	// Look into the library difflib (similar to
+	// python's difflib I think but read the
+	// documentation to be sure.)
+	err = ValidateUsernamePasswordTooSimilar(password)
+	if err != nil {
+		return "", err
+	}
+	// Hash the password and return the hashed password
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), 10) // 20: Not sure how intensive I want the hashing to be - check later
+	if err != nil {
+		fmt.Println("It reached here")
+		return "", err
+	}
+
+	// TODO: Read NIST standards for passwords
 	return string(hash), nil
 }

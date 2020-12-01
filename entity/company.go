@@ -17,6 +17,7 @@ func (company *Company) String() string {
 
 // NewCompany Company Constructor
 func NewCompany(companyName *string, companyIsActive *bool, lastPayment *time.Time) (*Company, error) {
+
 	return &Company{
 		CompanyName:     *companyName,
 		CompanyIsActive: *companyIsActive,
