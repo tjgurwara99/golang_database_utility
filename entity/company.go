@@ -6,7 +6,6 @@ import "time"
 type Company struct {
 	CompanyID       int64
 	CompanyName     string
-	CompanyManager  *User
 	CompanyIsActive bool
 	LastPayment     time.Time
 }

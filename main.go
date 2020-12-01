@@ -5,11 +5,11 @@ import (
 
 	"github.com/tjgurwara99/golang_database_utility/config"
 	"github.com/tjgurwara99/golang_database_utility/model"
-	"github.com/tjgurwara99/golang_database_utility/services"
+	"github.com/tjgurwara99/golang_database_utility/service"
 )
 
 func main() {
-	db, err := services.OpenDatabase(config.GetConfs())
+	db, err := service.OpenDatabase(config.GetConfs())
 
 	if err != nil {
 		panic(err)
@@ -17,7 +17,7 @@ func main() {
 
 	defer db.Close()
 
-	orderModel := model.OrderModel{db}
+	orderModel := model.OrderModel{DB: db}
 
 	orders, err := orderModel.SelectAll()
 	if err != nil {

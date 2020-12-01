@@ -73,34 +73,69 @@ func (userModel *UserModel) GetUserByID(userID int64) (*entity.User, error) {
 
 }
 
-// GetCompanyManager Get company manager
-func (userModel *UserModel) GetCompanyManager(managerID *int64, company *entity.Company) (*entity.User, error) {
+// GetCompanyManagers Get company managers returns a pointer to a slice of entity.User
+func (userModel *UserModel) GetCompanyManagers(company *entity.Company) (*[]entity.User, error) {
 	rows, err := userModel.DB.Query(`
 	select id, password, first_name, last_name, last_login, is_superuser, username,
-	email, is_staff, is_active, date_joined, birth_date
-	from user where id = ?`, managerID)
+	email, is_staff, is_active, date_joined, birth_date, is_owner
+	from user where (company_id = ?) and (is_manager = true)`, company.CompanyID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	var manager entity.User
+	var managers []entity.User
 
 	for rows.Next() {
+		var manager entity.User
+		manager.IsManager = true
 		err := rows.Scan(&manager.UserID, &manager.Password,
 			&manager.FirstName, &manager.LastName,
 			&manager.LastLogin, &manager.IsSuperUser,
 			&manager.UserName, &manager.Email,
 			&manager.IsStaff, &manager.IsActive,
-			&manager.DateJoined, &manager.BirthDate)
+			&manager.DateJoined, &manager.BirthDate, &manager.IsOwner)
 		if err != nil {
 			return nil, err
 		}
 		manager.Company = company
+		managers = append(managers, manager)
 	}
 
-	return &manager, nil
+	return &managers, nil
 
+}
+
+// GetCompanyOwners Get Company Owners from the database
+func (userModel *UserModel) GetCompanyOwners(company *entity.Company) (*[]entity.User, error) {
+	rows, err := userModel.DB.Query(`
+	select id, password, first_name, last_name, last_login, is_superuser, username,
+	email, is_staff, is_active, date_joined, birth_date, is_manager
+	from user where (company_id = ?) and (is_owner = true)`, company.CompanyID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var owners []entity.User
+
+	for rows.Next() {
+		var owner entity.User
+		owner.IsOwner = true
+		err := rows.Scan(&owner.UserID, &owner.Password,
+			&owner.FirstName, &owner.LastName,
+			&owner.LastLogin, &owner.IsSuperUser,
+			&owner.UserName, &owner.Email,
+			&owner.IsStaff, &owner.IsActive,
+			&owner.DateJoined, &owner.BirthDate,
+			&owner.IsManager)
+		if err != nil {
+			return nil, err
+		}
+		owner.Company = company
+		owners = append(owners, owner)
+	}
+	return &owners, nil
 }
 
 //GetUserByUsername Get User by Username
