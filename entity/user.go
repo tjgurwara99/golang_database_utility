@@ -15,8 +15,8 @@ type User struct {
 	FirstName   string
 	LastName    string
 	LastLogin   time.Time
-	IsSuperUser bool
-	UserName    string
+	IsSuperuser bool
+	Username    string
 	Email       string
 	IsStaff     bool
 	IsActive    bool
@@ -33,15 +33,15 @@ func (user *User) String() string {
 }
 
 // NewUser Constructor
-func NewUser(username, password, firstName, lastName, email string,
-	isSuperUser, isStaff, isActive, isManager, isOwner bool,
+func NewUser(Username, password, firstName, lastName, email string,
+	IsSuperuser, isStaff, isActive, isManager, isOwner bool,
 	company *Company, birthDate time.Time) (*User, error) {
 	user := &User{
-		UserName:    username,
+		Username:    Username,
 		FirstName:   firstName,
 		LastName:    lastName,
 		Email:       email,
-		IsSuperUser: isSuperUser,
+		IsSuperuser: IsSuperuser,
 		IsStaff:     isStaff,
 		IsActive:    isActive,
 		DateJoined:  time.Now(),
@@ -72,7 +72,7 @@ func (user *User) ValidatePasswordMinimumLength(password string) error {
 
 }
 
-// ValidateUsernamePasswordTooSimilar validates whether password is too similar to username
+// ValidateUsernamePasswordTooSimilar validates whether password is too similar to Username
 func (user *User) ValidateUsernamePasswordTooSimilar(password string) error {
 	// do some sequence matching - not familiar with the difflib library
 	// will get back to it when I have the time
@@ -90,7 +90,7 @@ func (user *User) ValidateNumericPassword(password string) error {
 
 // Validate User input validation checks
 func (user *User) Validate() error {
-	if user.UserName == "" || user.Email == "" || user.FirstName == "" ||
+	if user.Username == "" || user.Email == "" || user.FirstName == "" ||
 		user.LastName == "" {
 		return ErrInvalidDataInput
 	}
@@ -98,17 +98,9 @@ func (user *User) Validate() error {
 	return nil
 }
 
-// ValidatePassword Validating User Password with Hash
-func (user *User) ValidatePassword(password string) error {
-	err := user.ValidatePasswordMinimumLength(password)
-	if err != nil {
-		return err
-	}
-	err = user.ValidateUsernamePasswordTooSimilar(password)
-	if err != nil {
-		return err
-	}
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+// CheckPassword Validating This is to log the User in with Password
+func (user *User) CheckPassword(password string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
 		return err
 	}

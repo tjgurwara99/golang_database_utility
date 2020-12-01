@@ -11,6 +11,22 @@ type UserModel struct {
 	DB *sql.DB
 }
 
+// CreateUser Create a new user record in the database
+func (userModel *UserModel) CreateUser(newUser *entity.User) (*entity.User, error) {
+	_, err := userModel.DB.Exec(`
+	insert into user (first_name, last_name, last_login, is_superuser, username,
+	email, is_staff, is_active, date_joined, birth_date, is_manager, is_owner, company_id )
+	values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		newUser.FirstName, newUser.LastName, newUser.LastLogin, newUser.IsSuperuser,
+		newUser.Username, newUser.Email, newUser.IsStaff, newUser.IsActive,
+		newUser.DateJoined, newUser.BirthDate, newUser.IsManager, newUser.IsOwner, newUser.CompanyID)
+	if err != nil {
+		return nil, err
+	}
+	return newUser, nil
+
+}
+
 // GetCompanyUsers active users of a company for UserModel - restrict it to per company
 func (userModel *UserModel) GetCompanyUsers(userCompany entity.Company) (*[]entity.User, error) {
 	rows, err := userModel.DB.Query("select first_name, last_name, email from user where (company_id = ?) and (is_active=true) ", userCompany.CompanyID)
@@ -53,8 +69,8 @@ func (userModel *UserModel) GetUserByID(userID int64) (*entity.User, error) {
 	for rows.Next() {
 		err := rows.Scan(&user.UserID, &user.Password,
 			&user.FirstName, &user.LastName,
-			&user.LastLogin, &user.IsSuperUser,
-			&user.UserName, &user.Email,
+			&user.LastLogin, &user.IsSuperuser,
+			&user.Username, &user.Email,
 			&user.IsStaff, &user.IsActive,
 			&user.DateJoined, &companyID,
 			&user.BirthDate)
@@ -91,8 +107,8 @@ func (userModel *UserModel) GetCompanyManagers(company *entity.Company) (*[]enti
 		manager.IsManager = true
 		err := rows.Scan(&manager.UserID, &manager.Password,
 			&manager.FirstName, &manager.LastName,
-			&manager.LastLogin, &manager.IsSuperUser,
-			&manager.UserName, &manager.Email,
+			&manager.LastLogin, &manager.IsSuperuser,
+			&manager.Username, &manager.Email,
 			&manager.IsStaff, &manager.IsActive,
 			&manager.DateJoined, &manager.BirthDate, &manager.IsOwner)
 		if err != nil {
@@ -124,8 +140,8 @@ func (userModel *UserModel) GetCompanyOwners(company *entity.Company) (*[]entity
 		owner.IsOwner = true
 		err := rows.Scan(&owner.UserID, &owner.Password,
 			&owner.FirstName, &owner.LastName,
-			&owner.LastLogin, &owner.IsSuperUser,
-			&owner.UserName, &owner.Email,
+			&owner.LastLogin, &owner.IsSuperuser,
+			&owner.Username, &owner.Email,
 			&owner.IsStaff, &owner.IsActive,
 			&owner.DateJoined, &owner.BirthDate,
 			&owner.IsManager)
@@ -159,8 +175,8 @@ func (userModel *UserModel) GetUserByUsername(username string) (*entity.User, er
 	for rows.Next() {
 		err := rows.Scan(&user.UserID, &user.Password,
 			&user.FirstName, &user.LastName,
-			&user.LastLogin, &user.IsSuperUser,
-			&user.UserName, &user.Email,
+			&user.LastLogin, &user.IsSuperuser,
+			&user.Username, &user.Email,
 			&user.IsStaff, &user.IsActive,
 			&user.DateJoined, &companyID,
 			&user.BirthDate)
@@ -188,7 +204,7 @@ func (userModel UserModel) Authenticate(username, password string) (*entity.User
 		return nil, err
 	}
 
-	err = user.ValidatePassword(password)
+	err = user.CheckPassword(password)
 
 	if err != nil {
 		return nil, err

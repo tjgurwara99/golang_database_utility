@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/tjgurwara99/golang_database_utility/config"
+	"github.com/tjgurwara99/golang_database_utility/entity"
 	"github.com/tjgurwara99/golang_database_utility/model"
 	"github.com/tjgurwara99/golang_database_utility/service"
 )
@@ -17,15 +19,19 @@ func main() {
 
 	defer db.Close()
 
-	orderModel := model.OrderModel{DB: db}
+	companyModel := model.CompanyModel{DB: db}
 
-	orders, err := orderModel.SelectAll()
+	company := entity.Company{
+		CompanyName:     "Crowntech",
+		CompanyIsActive: true,
+		LastPayment:     time.Now(),
+	}
+
+	_, err = companyModel.CreateCompany(&company)
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 
-	for _, value := range orders {
-		fmt.Println(&value)
-	}
+	fmt.Printf("Company ID: %d, Company Name: %s, Company Is Active: %v, Last Payment: %v", company.CompanyID, company.CompanyName, company.CompanyIsActive, company.LastPayment)
 
 }

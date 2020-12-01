@@ -14,3 +14,12 @@ type Company struct {
 func (company *Company) String() string {
 	return company.CompanyName
 }
+
+// NewCompany Company Constructor
+func NewCompany(companyName *string, companyIsActive *bool, lastPayment *time.Time) (*Company, error) {
+	return &Company{
+		CompanyName:     *companyName,
+		CompanyIsActive: *companyIsActive,
+		LastPayment:     *lastPayment,
+	}, nil
+}
