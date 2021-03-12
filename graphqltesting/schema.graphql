@@ -17,7 +17,7 @@ type Link {
 type Mutation {
     post(url: String!, description: String!): Link!
     signup(email: String!, password: String!, firstName: String!, lastName: String!): AuthPayload
-    login(email: String!, password: String!) AuthPayload
+    # login(email: String!, password: String!): AuthPayload
 }
 
 type AuthPayload {
