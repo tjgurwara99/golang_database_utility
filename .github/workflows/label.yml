@@ -6,4 +6,4 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: tjgurwara99/label-maker@v0.1.5-debug
+      - uses: tjgurwara99/label-maker@v0.1.6-debug
