@@ -1,0 +1,9 @@
+name: Labeling issue 
+on:
+  issues:
+    types: ['opened']
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: tjgurwara99/label-maker@v0.15-debug
