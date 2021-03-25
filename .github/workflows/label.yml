@@ -1,4 +1,4 @@
-name: Labeling issue 
+name: Issue's Auto Label
 on:
   issues:
     types: ['opened', 'edited']
@@ -6,6 +6,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: tjgurwara99/label-maker@v0.1
+      - uses: tjgurwara99/label-maker@v0.1.1
         with: 
           token: ${{ secrets.GITHUB_TOKEN }}
