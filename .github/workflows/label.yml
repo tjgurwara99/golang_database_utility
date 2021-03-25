@@ -6,6 +6,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: tjgurwara99/label-maker@v0.1-beta
+      - uses: tjgurwara99/label-maker@v0.1
         with: 
           token: ${{ secrets.GITHUB_TOKEN }}
